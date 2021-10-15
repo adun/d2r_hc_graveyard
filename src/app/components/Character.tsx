@@ -1,17 +1,13 @@
 import styled from "styled-components";
 
 interface ICharacter {
-  src: string;
-  name: string;
+  role: string;
 }
 
-function Character({ src, name }: ICharacter) {
-  return (
-    <div>
-      {src && <Image src={src} alt={name} />}
-      <p>{name}</p>
-    </div>
-  );
+function Character({ role }: ICharacter) {
+  let src = require(`../../assets/images/${role}.png`).default;
+
+  return <div>{src && <Image src={src} alt={role} />}</div>;
 }
 
 const Image = styled.img`
