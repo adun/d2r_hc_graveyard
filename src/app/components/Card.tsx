@@ -37,6 +37,7 @@ const Container = styled.div`
   background-color: rgb(207, 232, 220);
   border: 2px solid rgb(79, 185, 227);
   margin: 0 0 1em 0;
+  padding: 0 10px;
 `;
 
 const Left = styled.div`

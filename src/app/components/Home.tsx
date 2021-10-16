@@ -1,18 +1,15 @@
 import React from "react";
 import styled from "styled-components";
 
-import Card from "./Card";
+import Player from "./Player";
 
 function Home() {
   return (
     <Container>
-      <Card />
-      <Card />
-      <Card />
-      <Card />
-      <Card />
-      <Card />
-      <Card />
+      <Player name="Adun" />
+      <Player name="Askyoh" />
+      <Player name="Seikyuu" />
+      <Player name="Thomas" />
     </Container>
   );
 }
