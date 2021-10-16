@@ -1,14 +1,35 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import Card from "./Card";
-
 import ghost from "../../assets/images/ghost.png";
+import { db } from "../../firebase";
+import { addDoc, collection } from "@firebase/firestore";
 
 interface IPlayer {
   name: String;
 }
 
 function Player(props: IPlayer) {
+  const [loading, setLoading] = useState(false);
+
+  const addCard = async () => {
+    if (loading) return;
+
+    setLoading(true);
+
+    const docRef = await addDoc(collection(db, "cards"), {
+      role: "paladin",
+      level: 10,
+      name: "test",
+      killer: "Boneash",
+      timestamp: Date.now(),
+    });
+
+    console.log("New doc added with id: ", docRef.id);
+
+    setLoading(false);
+  };
+
   return (
     <div>
       <PlayerName>
@@ -24,6 +45,9 @@ function Player(props: IPlayer) {
         <Card />
         <Card />
       </CardList>
+      <button type="submit" onClick={addCard}>
+        Add Card
+      </button>
     </div>
   );
 }
