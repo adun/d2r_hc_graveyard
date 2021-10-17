@@ -1,13 +1,10 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import Card from "./Card";
+import Character from "./Character";
 import ghost from "../../assets/images/ghost.png";
 import { db } from "../../firebase";
 import { addDoc, collection } from "@firebase/firestore";
-
-interface IPlayer {
-  name: String;
-}
+import { IPlayer } from "../../typings/IPlayer";
 
 function Player(props: IPlayer) {
   const [loading, setLoading] = useState(false);
@@ -31,26 +28,34 @@ function Player(props: IPlayer) {
   };
 
   return (
-    <div>
+    <Container>
       <PlayerName>
         <img src={ghost} alt="ghost" />
         <p>{props.name}</p>
       </PlayerName>
       <CardList>
-        <Card />
-        <Card />
-        <Card />
-        <Card />
-        <Card />
-        <Card />
-        <Card />
+        {props.characters.map((character) => (
+          <Character
+            role={character.role}
+            level={character.level}
+            name={character.name}
+            killer={character.killer}
+            timestamp={character.timestamp}
+          />
+        ))}
       </CardList>
       <button type="submit" onClick={addCard}>
         Add Card
       </button>
-    </div>
+    </Container>
   );
 }
+
+const Container = styled.div`
+  min-width: 250px;
+  align-items: center;
+  justify-content: center;
+`;
 
 const CardList = styled.div`
   display: flex;
