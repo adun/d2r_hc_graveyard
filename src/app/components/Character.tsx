@@ -1,8 +1,14 @@
+import { Timestamp } from "firebase/firestore";
+import moment from "moment";
 import styled from "styled-components";
 import { ICharacter } from "../../typings/ICharacter";
 import RoleIcon from "./RoleIcon";
 
 function Character(props: ICharacter) {
+  const formatTimestamp = (ts: Timestamp): string => {
+    return moment(ts.toDate()).format("YYYY-MM-DD");
+  };
+
   return (
     <Container>
       <Left>
@@ -14,16 +20,8 @@ function Character(props: ICharacter) {
         <p>
           <i>Killed by</i> {props.killer}
         </p>
-        <p>{props.timestamp}</p>
+        <p>{formatTimestamp(props.timestamp)}</p>
       </Right>
-      {/*
-        <RoleIcon role="assassin" />
-        <RoleIcon role="barbarian" />
-        <RoleIcon role="druid" />
-        <RoleIcon role="necromancer" />
-        <RoleIcon role="paladin" />
-        <RoleIcon role="sorceress" />
-      */}
     </Container>
   );
 }
@@ -34,6 +32,7 @@ const Container = styled.div`
   justify-content: space-around;
   align-items: center;
   break-inside: avoid;
+  width: 270px;
   page-break-inside: avoid;
   background-color: rgb(207, 232, 220);
   border: 2px solid rgb(79, 185, 227);
@@ -46,6 +45,7 @@ const Left = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  width: 80px;
 `;
 
 const Right = styled.div`

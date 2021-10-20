@@ -1,13 +1,35 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Character from "./Character";
 import ghost from "../../assets/images/ghost.png";
+import {
+  addDoc,
+  collection,
+  onSnapshot,
+  orderBy,
+  query,
+} from "firebase/firestore";
 import { db } from "../../firebase";
-import { addDoc, collection } from "@firebase/firestore";
 import { IPlayer } from "../../typings/IPlayer";
 
 function Player(props: IPlayer) {
   const [loading, setLoading] = useState(false);
+  const [characters, setCharacters] = useState<any[]>([]);
+
+  useEffect(
+    () =>
+      onSnapshot(
+        query(
+          collection(db, "players", props.playerId, "characters"),
+          orderBy("timestamp", "desc")
+        ),
+
+        (snapshot) => {
+          setCharacters(snapshot.docs);
+        }
+      ),
+    [props.playerId]
+  );
 
   const addCard = async () => {
     if (loading) return;
@@ -33,31 +55,31 @@ function Player(props: IPlayer) {
         <img src={ghost} alt="ghost" />
         <p>{props.name}</p>
       </PlayerName>
-      <CardList>
-        {props.characters.map((character) => (
+      <CharacterList>
+        {characters.map((character) => (
           <Character
-            role={character.role}
-            level={character.level}
-            name={character.name}
-            killer={character.killer}
-            timestamp={character.timestamp}
+            key={character.id}
+            role={character.data().role}
+            level={character.data().level}
+            name={character.data().name}
+            killer={character.data().killer}
+            timestamp={character.data().timestamp}
           />
         ))}
-      </CardList>
-      <button type="submit" onClick={addCard}>
-        Add Card
-      </button>
+        <AddButton type="submit" onClick={addCard}>
+          +
+        </AddButton>
+      </CharacterList>
     </Container>
   );
 }
 
 const Container = styled.div`
-  min-width: 250px;
   align-items: center;
   justify-content: center;
 `;
 
-const CardList = styled.div`
+const CharacterList = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -69,7 +91,7 @@ const PlayerName = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
+  height: 80px;
 
   img {
     height: 50px;
@@ -81,6 +103,32 @@ const PlayerName = styled.div`
     font-size: 48px;
     width: auto;
     color: rgb(165, 133, 70);
+  }
+`;
+
+const AddButton = styled.button`
+  display: block;
+  background-color: rgb(207, 232, 220);
+  border: 2px solid rgb(79, 185, 227);
+  font-family: unset;
+  border-radius: 20%;
+
+  height: 60px;
+  width: 60px;
+  line-height: 60px;
+  font-size: 4em;
+  font-weight: bold;
+  border-radius: 50%;
+  text-align: center;
+
+  &:hover {
+    background-color: #aaa;
+    cursor: pointer;
+  }
+
+  &:active {
+    background-color: #666;
+    color: #eee;
   }
 `;
 
