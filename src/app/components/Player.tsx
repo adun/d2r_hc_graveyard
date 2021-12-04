@@ -2,19 +2,17 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Character from "./Character";
 import ghost from "../../assets/images/ghost.png";
-import {
-  addDoc,
-  collection,
-  onSnapshot,
-  orderBy,
-  query,
-} from "firebase/firestore";
+import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { db } from "../../firebase";
 import { IPlayer } from "../../typings/IPlayer";
+import { modalState } from "../../atoms/modalAtom";
+import { useRecoilState } from "recoil";
+import { playerState } from "../../atoms/playerState";
 
 function Player(props: IPlayer) {
-  const [loading, setLoading] = useState(false);
   const [characters, setCharacters] = useState<any[]>([]);
+  const [open, setOpen] = useRecoilState(modalState);
+  const [playerId, setPlayerId] = useRecoilState(playerState);
 
   useEffect(
     () =>
@@ -31,22 +29,9 @@ function Player(props: IPlayer) {
     [props.playerId]
   );
 
-  const addCard = async () => {
-    if (loading) return;
-
-    setLoading(true);
-
-    const docRef = await addDoc(collection(db, "cards"), {
-      role: "paladin",
-      level: 10,
-      name: "test",
-      killer: "Boneash",
-      timestamp: Date.now(),
-    });
-
-    console.log("New doc added with id: ", docRef.id);
-
-    setLoading(false);
+  const handleOpenModal = () => {
+    setOpen(true);
+    setPlayerId(props.playerId);
   };
 
   return (
@@ -66,9 +51,7 @@ function Player(props: IPlayer) {
             timestamp={character.data().timestamp}
           />
         ))}
-        <AddButton type="submit" onClick={addCard}>
-          +
-        </AddButton>
+        <PlusCircleIcon onClick={() => handleOpenModal()}>+</PlusCircleIcon>
       </CharacterList>
     </Container>
   );
@@ -106,7 +89,7 @@ const PlayerName = styled.div`
   }
 `;
 
-const AddButton = styled.button`
+const PlusCircleIcon = styled.button`
   display: block;
   background-color: rgb(207, 232, 220);
   border: 2px solid rgb(79, 185, 227);
